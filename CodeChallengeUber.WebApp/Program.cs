@@ -1,7 +1,14 @@
+using CodeChallengeUber.WebApp.Models.OlhoVivo;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient();
+builder.Services.Configure<OlhoVivoApiSettings>(builder.Configuration.GetSection("OlhoVivoApiSettings"));
+
+// Load secrets from secrets.json
+builder.Configuration.AddUserSecrets<Program>();
 
 var app = builder.Build();
 
