@@ -8,4 +8,14 @@
             }
         })
     })
+
+    $("#getPosicaoButton").click(() => {
+        $.ajax({
+            url: "/OlhoVivo/Posicao",
+            type: "GET",
+            success: (response) => {
+                $("#result").html(response)
+            }
+        })
+    })
 })

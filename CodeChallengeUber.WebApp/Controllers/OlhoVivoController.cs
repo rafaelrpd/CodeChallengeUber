@@ -1,6 +1,7 @@
 ﻿using CodeChallengeUber.WebApp.Models.OlhoVivo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 
 namespace CodeChallengeUber.WebApp.Controllers
 {
@@ -30,12 +31,36 @@ namespace CodeChallengeUber.WebApp.Controllers
             string url = $"{_olhoVivoApiSettings.BaseUrl}{_olhoVivoApiSettings.Endpoints.Autenticar.Replace("{token}", _olhoVivoApiSettings.ApiKey)}";
 
             var response = await _httpClient.PostAsync(url, null);
-            if (response.IsSuccessStatusCode)
+
+            if (!response.IsSuccessStatusCode)
             {
-                var content = await response.Content.ReadAsStringAsync();
-                return Ok(content);
+                return BadRequest();
             }
-            return BadRequest();
+
+            var content = await response.Content.ReadAsStringAsync();
+            return Ok(content);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Posicao()
+        {
+            string url = $"{_olhoVivoApiSettings.BaseUrl}{_olhoVivoApiSettings.Endpoints.GetPosicao}";
+
+            var response = await _httpClient.GetAsync(url);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return BadRequest();
+            }
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            var posicoes = JsonSerializer.Deserialize<PosicaoVeiculosResponse>(responseContent, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return Ok(posicoes);
         }
     }
 }
